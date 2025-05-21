@@ -73,9 +73,6 @@ export default function DashboardPage() {
         {instagramAccount.posts.map((post: InstagramPost) => (
           <InstagramPostCard key={post.id} post={post} onClick={() => setSelectedPost(post)} />
         ))}
-        {instagramAccount.posts.map((post: InstagramPost) => (
-          <InstagramPostCard key={post.id} post={post} onClick={() => setSelectedPost(post)} />
-        ))}
       </div>
 
       {selectedPost && <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />}
