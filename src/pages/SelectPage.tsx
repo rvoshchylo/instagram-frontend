@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SelectPage() {
@@ -10,6 +10,16 @@ export default function SelectPage() {
     if (!pageId.trim()) return;
     navigate(`/profile?appId=${pageId.trim()}`);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+
+    if (token) {
+      localStorage.setItem('fb_token', token);
+      window.history.replaceState({}, '', '/select');
+    }
+  }, []);
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
