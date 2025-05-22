@@ -1,3 +1,5 @@
+import { LogoutButton } from './Logout';
+
 interface ErrorMessageProps {
   message: string;
 }
@@ -5,10 +7,10 @@ interface ErrorMessageProps {
 export const ErrorMessage = ({ message }: ErrorMessageProps) => {
   return (
     <div className="flex items-center justify-center h-screen px-4">
-      <div className="bg-red-50 text-red-600 border border-red-200 rounded p-6 max-w-md w-full shadow-sm text-center">
+      <div className="bg-red-50 text-red-600 border border-red-200 rounded p-6 max-w-md w-full shadow-sm text-center flex flex-col space-y-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="mx-auto mb-3 h-8 w-8 text-red-500"
+          className="mx-auto h-8 w-8 text-red-500"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -21,6 +23,7 @@ export const ErrorMessage = ({ message }: ErrorMessageProps) => {
           />
         </svg>
         <p className="text-lg font-medium">{message}</p>
+        <LogoutButton />
       </div>
     </div>
   );
