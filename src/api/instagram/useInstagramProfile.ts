@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchInstagramProfile } from './fetchProfile';
 import type { CreateInstagramPost } from '../../types/CreateInstagramPost';
 import { createInstagramPost } from './createPost';
+import { uploadImage } from './uploadnImage';
 
 export const useInstagramProfile = (pageId: string | null) => {
   return useQuery({
@@ -21,3 +22,9 @@ export const useCreateInstagramPost = () => {
     },
   });
 };
+
+export const useUploadImage = (onSuccess: (url: string) => void) =>
+  useMutation({
+    mutationFn: uploadImage,
+    onSuccess: data => onSuccess(data.url),
+  });

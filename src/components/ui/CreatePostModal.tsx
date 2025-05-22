@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { LoaderButton } from './LoaderButton';
+import { useUploadImage } from '../../api/instagram/useInstagramProfile';
 
 interface CreatePostModalProps {
   onClose: () => void;
@@ -8,8 +9,14 @@ interface CreatePostModalProps {
 }
 
 export default function CreatePostModal({ onClose, onSubmit, isPending }: CreatePostModalProps) {
-  const [imageUrl, setImageUrl] = useState('');
   const [caption, setCaption] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+
+  const { mutate: uploadFile, isPending: isUploading } = useUploadImage(url => {
+    setImageUrl(url);
+  });
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -17,6 +24,15 @@ export default function CreatePostModal({ onClose, onSubmit, isPending }: Create
       document.body.style.overflow = '';
     };
   }, []);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      uploadFile(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,15 +52,22 @@ export default function CreatePostModal({ onClose, onSubmit, isPending }: Create
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Image URL</label>
+            <label className="block text-sm font-medium text-gray-700">Upload Image/Video</label>
             <input
-              type="url"
-              value={imageUrl}
-              onChange={e => setImageUrl(e.target.value)}
-              required
-              placeholder="https://example.com/image.jpg"
-              className="mt-1 w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="file"
+              accept="image/*,video/*"
+              onChange={handleFileChange}
+              className="mt-1 block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
             />
+            {previewUrl && (
+              <div className="mt-2">
+                {selectedFile?.type.startsWith('video') ? (
+                  <video src={previewUrl} controls className="w-full max-h-60 rounded" />
+                ) : (
+                  <img src={previewUrl} alt="Preview" className="w-full max-h-60 rounded object-contain" />
+                )}
+              </div>
+            )}
           </div>
 
           <div>
@@ -64,10 +87,10 @@ export default function CreatePostModal({ onClose, onSubmit, isPending }: Create
               disabled={isPending}
               className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              {isPending ? (
+              {isPending || isUploading ? (
                 <>
                   <LoaderButton />
-                  Publishing...
+                  {isUploading ? 'Uploading...' : 'Publishing...'}
                 </>
               ) : (
                 'Publish'
