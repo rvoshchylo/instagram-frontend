@@ -1,6 +1,6 @@
 export default function LoginPage() {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/instagram';
+    window.location.href = import.meta.env.VITE_API_URL + '/auth/facebook';
   };
 
   return (
